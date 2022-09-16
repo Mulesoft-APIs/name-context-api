@@ -92,10 +92,7 @@ jobs:
     - uses: actions/download-artifact@master
       with:
         name: artifacts
-    - name: Print vars
-      run: |
-        echo "env ${{ needs.prepare.outputs.environment }}"
-        echo "suffix ${{ needs.prepare.outputs.appNameSuffix }}"
+    
     - name: Deploy to CloudHub Environment
       env:
         ENVIRONMENT: ${{ needs.prepare.outputs.environment }}
