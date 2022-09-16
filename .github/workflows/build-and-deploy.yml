@@ -76,7 +76,7 @@ jobs:
           path: target/*.jar
         
   deploy:
-    needs: build
+    needs: [prepare, build]
     runs-on: ubuntu-latest
 
     steps: 
