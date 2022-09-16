@@ -40,8 +40,8 @@
 						<objectStoreV2>true</objectStoreV2>
 						<region>us-east-2</region>
 						<connectedAppClientId>${env.connAppClientID}</connectedAppClientId>
-		                <connectedAppClientSecret>${env.connAppClientSecret}</connectedAppClientSecret>
-		                <connectedAppGrantType>client_credentials</connectedAppGrantType>
+						<connectedAppClientSecret>${env.connAppClientSecret}</connectedAppClientSecret>
+						<connectedAppGrantType>client_credentials</connectedAppGrantType>
 					</cloudHubDeployment>
 				</configuration>
 			</plugin>
