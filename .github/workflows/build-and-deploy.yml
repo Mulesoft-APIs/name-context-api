@@ -76,7 +76,7 @@ jobs:
           path: target/*.jar
         
   deploy:
-    needs: build
+    needs: [prepare, build]
     runs-on: ubuntu-latest
 
     steps: 
@@ -101,7 +101,7 @@ jobs:
         CONN_APP_CLIENT_SECRET: ${{ secrets.CONN_APP_CLIENT_SECRET }}
       run: |
         artifactName=$(ls *.jar | head -1)
-        mvn deploy -DmuleDeploy \
+        mvn deploy -X -DmuleDeploy \
          -Dmule.artifact=$artifactName \
          -Denv.environment="$ENVIRONMENT" \
          -Denv.appNameSuffix="$APP_NAME_SUFFIX" \
