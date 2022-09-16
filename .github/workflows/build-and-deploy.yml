@@ -25,7 +25,7 @@ jobs:
     - name: Set variables
       id: set_vars
       run: |
-        echo "::set-output name=environment::${{ steps.extract_branch.outputs.branch }}"
+        echo "##[set-output name=environment;]$(echo "${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')"
         if [[ "${{ steps.extract_branch.outputs.branch }}" != "main" ]]; then
           echo "##[set-output name=appNameSuffix;]$(echo "-${{ steps.extract_branch.outputs.branch }}" | tr '[:upper:]' '[:lower:]')"
         fi
