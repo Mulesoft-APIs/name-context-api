@@ -33,7 +33,7 @@
 					<classifier>mule-application</classifier>
 					<cloudHubDeployment>
 						<muleVersion>4.4.0</muleVersion>
-						<applicationName>name-context-api-${env.appNameSuffix}</applicationName>
+						<applicationName>name-context-api${env.appNameSuffix}</applicationName>
 						<environment>${env.environment}</environment>
 						<workers>1</workers>
 						<workerType>MICRO</workerType>
