@@ -14,7 +14,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
 		<app.runtime>4.4.0-20220523</app.runtime>
-		<mule.maven.plugin.version>3.5.4</mule.maven.plugin.version>
+		<mule.maven.plugin.version>3.6.3</mule.maven.plugin.version>
 	</properties>
 
 	<build>
@@ -40,8 +40,8 @@
 						<objectStoreV2>true</objectStoreV2>
 						<region>us-east-2</region>
 						<connectedAppClientId>${env.connAppClientID}</connectedAppClientId>
-		                <connectedAppClientSecret>${env.connAppClientSecret}</connectedAppClientSecret>
-		                <connectedAppGrantType>client_credentials</connectedAppGrantType>
+						<connectedAppClientSecret>${env.connAppClientSecret}</connectedAppClientSecret>
+						<connectedAppGrantType>client_credentials</connectedAppGrantType>
 					</cloudHubDeployment>
 				</configuration>
 			</plugin>
