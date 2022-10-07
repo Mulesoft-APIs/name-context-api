@@ -49,11 +49,14 @@ jobs:
       run: |
         echo "KEY: $CLIENT_ID"
         echo ${{ secrets.CLIENT_ID }}
+        echo "::set-output name=client_id::${{ secrets.CLIENT_ID }}"
         
   deploy:
     needs: [prepare, build]
     runs-on: ubuntu-latest
-
+    environment:
+        name: ${{ needs.prepare.outputs.environment }}
+        
     steps: 
     - name: Print vars
       run: |
