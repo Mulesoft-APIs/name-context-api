@@ -14,6 +14,7 @@ jobs:
     outputs:
         environment: ${{ steps.set_vars.outputs.environment }}
         appNameSuffix: ${{ steps.set_vars.outputs.appNameSuffix }}
+        testVar: ${{ steps.set_vars.outputs.testVar }}
         secretSuffix: ${{ steps.step_vars.outputs.secretSuffix }}
         secretName: ${{ steps.step_vars.outputs.secretName }}
     steps:
@@ -31,8 +32,9 @@ jobs:
         if [[ "${{ steps.extract_branch.outputs.branch }}" != "main" ]]; then
           echo "##[set-output name=appNameSuffix;]$(echo "-${{ steps.extract_branch.outputs.branch }}" | tr '[:upper:]' '[:lower:]')"
         fi
-        echo "##[set-output name=secretSuffix;]$(echo "-${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')"
+        echo "##[set-output name=secretSuffix;]$(echo "${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')"
         echo "##[set-output name=secretName;]$(echo "CLIENT_ID_${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')"
+        echo "::set-output name=testVar::hello"
         
     - name: Print variables
       run: |
@@ -48,14 +50,14 @@ jobs:
         name: ${{ needs.prepare.outputs.environment }}
     outputs: 
       client_id: ${{ steps.set_vars.outputs.client_id }}
-    env:
-      SECRET_NAME: ${{ needs.prepare.outputs.secretName }}
     steps:
     - name: Print vars
       run: |
-        echo "SECRET_NAME: ${{ needs.prepare.outputs.secretName }}"
+        echo "Secret name: ${{ needs.prepare.outputs.secretName }}"
+        echo "Secret suffix: ${{ needs.prepare.outputs.secretSuffix }}"
         echo "Env: ${{ needs.prepare.outputs.environment }}"
         echo "Suffix: ${{ needs.prepare.outputs.appNameSuffix }}"
+        echo "Test var: ${{ needs.prepare.outputs.testVar }}"
         
     - name: Print Env Secret
       id: set_vars
