@@ -15,6 +15,7 @@ jobs:
         environment: ${{ steps.set_vars.outputs.environment }}
         appNameSuffix: ${{ steps.set_vars.outputs.appNameSuffix }}
         secretSuffix: ${{ steps.step_vars.outputs.secretSuffix }}
+        secretName: ${{ steps.step_vars.outputs.secretName }}
     steps:
     - name: Extract branch name
       id: extract_branch
@@ -30,12 +31,15 @@ jobs:
         if [[ "${{ steps.extract_branch.outputs.branch }}" != "main" ]]; then
           echo "##[set-output name=appNameSuffix;]$(echo "-${{ steps.extract_branch.outputs.branch }}" | tr '[:upper:]' '[:lower:]')"
         fi
-        echo "##[set-output name=appNameSuffix;]$(echo "-${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')"
+        echo "##[set-output name=secretSuffix;]$(echo "-${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')"
+        echo "##[set-output name=secretName;]$(echo "CLIENT_ID_${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')"
         
     - name: Print variables
       run: |
         echo "Env ${{ steps.set_vars.outputs.environment }}"
         echo "Suffix ${{ steps.set_vars.outputs.appNameSuffix }}"
+        echo "secret suffix ${{ steps.set_vars.outputs.secretSuffix }}"
+        echo "secret name ${{ steps.set_vars.outputs.secretName }}"
       
   build:
     runs-on: ubuntu-latest
@@ -53,7 +57,6 @@ jobs:
         echo KEY: $CLIENT_ID
         echo ${{ secrets.CLIENT_ID }}
         echo "::set-output name=client_id::${{ secrets.CLIENT_ID }}"
-        echo ${{ secrets[format('CLIENT_ID_{0}', ${{ needs.prepare.outputs.secretSuffix }} )] }}
         
   deploy:
     needs: [prepare, build]
