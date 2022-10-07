@@ -41,13 +41,14 @@ jobs:
     environment:
         name: ${{ needs.prepare.outputs.environment }}
     outputs: 
-      client_id: ${{ secrets.CLIENT_ID }}
+      client_id: ${{ steps.set_vars.outputs.client_id }}
     steps:
     - name: Print Env Secret
+      id: set_vars
       env:
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
       run: |
-        echo "KEY: $CLIENT_ID"
+        echo KEY: $CLIENT_ID
         echo ${{ secrets.CLIENT_ID }}
         echo "::set-output name=client_id::${{ secrets.CLIENT_ID }}"
         
@@ -60,7 +61,6 @@ jobs:
     steps: 
     - name: Print vars
       run: |
-        echo "KEY: $CLIENT_ID"
         echo ${{ secrets.CLIENT_ID }}
         echo ${{ needs.build.outputs.client_id }}
   
