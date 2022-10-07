@@ -57,8 +57,7 @@ jobs:
       run: |
         echo KEY: $CLIENT_ID
         echo ${{ secrets.CLIENT_ID }}
-        echo  ${{ secrets[need.prepare.outputs.secretName] }}
-        echo  ${{ secrets[env.SECRET_NAME] }}
+        echo ${{ secrets[env.SECRET_NAME] }}
         echo "::set-output name=client_id::${{ secrets.CLIENT_ID }}"
         
   deploy:
