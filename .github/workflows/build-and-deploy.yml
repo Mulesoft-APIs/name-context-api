@@ -53,7 +53,10 @@ jobs:
     steps:
     - name: Print vars
       run: |
-        echo SECRET_NAME: ${{ needs.prepare.outputs.secretName }}
+        echo "SECRET_NAME: ${{ needs.prepare.outputs.secretName }}"
+        echo "Env: ${{ needs.prepare.outputs.environment }}"
+        echo "Suffix: ${{ needs.prepare.outputs.appNameSuffix }}"
+        
     - name: Print Env Secret
       id: set_vars
       env:
