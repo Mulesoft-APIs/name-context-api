@@ -34,7 +34,9 @@ jobs:
         fi
         echo "##[set-output name=secretSuffix;]$(echo "${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')"
         echo "##[set-output name=secretName;]$(echo "CLIENT_ID_${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')"
-        echo "::set-output name=testVar::hello"
+        suffix=$(echo "${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')
+        echo $suffix
+        echo "::set-output name=testVar::CLIENT_ID_$suffix"
         
     - name: Print variables
       run: |
