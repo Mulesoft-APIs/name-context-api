@@ -14,8 +14,9 @@ jobs:
     outputs:
         environment: ${{ steps.set_vars.outputs.environment }}
         appNameSuffix: ${{ steps.set_vars.outputs.appNameSuffix }}
-        secretSuffix: ${{ steps.set_vars.outputs.secretSuffix }}
-        secretName: ${{ steps.set_vars.outputs.secretName }}
+        clientIdSecretName: ${{ steps.set_vars.outputs.clientIdSecretName }}
+        clientSecretName: ${{ steps.set_vars.outputs.clientSecretName }}
+        
     steps:
     - name: Extract branch name
       id: extract_branch
@@ -29,18 +30,18 @@ jobs:
       run: |
         environment=$(echo "${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')
         echo "::set-output name=environment::$environment"
-        #echo "##[set-output name=environment;]$(echo "${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')"
         if [[ "${{ steps.extract_branch.outputs.branch }}" != "main" ]]; then
           echo "##[set-output name=appNameSuffix;]$(echo "-${{ steps.extract_branch.outputs.branch }}" | tr '[:upper:]' '[:lower:]')"
         fi
-        echo "::set-output name=secretName::CLIENT_ID_$environment"
+        echo "::set-output name=clientIdSecretName::  CONN_ENV_$environment_CLIENT_ID"
+        echo "::set-output name=clientSecretName::  CONN_ENV_$environment_CLIENT_SECRET"
         
     - name: Print variables
       run: |
-        echo "Env ${{ steps.set_vars.outputs.environment }}"
+        echo "Environment ${{ steps.set_vars.outputs.environment }}"
         echo "Suffix ${{ steps.set_vars.outputs.appNameSuffix }}"
-        echo "secret suffix ${{ steps.set_vars.outputs.secretSuffix }}"
-        echo "secret name ${{ steps.set_vars.outputs.secretName }}"
+        echo "Cient ID Name ${{ steps.set_vars.outputs.clientIdSecretName }}"
+        echo "Cient Secret Name ${{ steps.set_vars.outputs.clientSecretName }}"
       
   build:
     runs-on: ubuntu-latest
@@ -48,23 +49,24 @@ jobs:
     environment:
         name: ${{ needs.prepare.outputs.environment }}
     env:
-      CLIENT_ID_NAME: ${{ needs.prepare.outputs.secretName }}
+      CLIENT_ID_NAME: ${{ needs.prepare.outputs.clientIdSecretName }}
+      CLIENT_SECRET_NAME: ${{ needs.prepare.outputs.clientSecretName }}
+      
     steps:
     - name: Print vars
       run: |
-        echo "Secret name: ${{ needs.prepare.outputs.secretName }}"
+        echo "Secret name: ${{ needs.prepare.outputs.clientIdSecretName }}"
+        echo "Secret name: ${{ needs.prepare.outputs.clientSecretName }}"
         echo "Env: ${{ needs.prepare.outputs.environment }}"
 
     - name: Print Env Secret
       id: set_vars
       env:
-        SECRET_ID: ${{ secrets[env.CLIENT_ID_NAME] }}
-        SECRET_ID_2: ${{ secrets[needs.prepare.outputs.secretName] }}
-        CLIENT_ID_DEV: ${{ secrets[format('CLIENT_ID_{0}', needs.prepare.outputs.environment )] }}
+        CLIENT_ID: ${{ secrets[env.CLIENT_ID_NAME] }}
+        CLIENT_SECRET: ${{ secrets[env.CLIENT_ID_SECRET] }}
       run: |
-        echo SECRET_CLIENT_ID: $SECRET_ID
-        echo SECRET_CLIENT_ID_2: $SECRET_ID_2
-        echo CLIENT_ID_DEV: $CLIENT_ID_DEV
+        echo SECRET_CLIENT_ID: $CLIENT_ID
+        echo SECRET_CLIENT_SECRET: $CLIENT_SECRET
 
   deploy:
     needs: [prepare, build]
