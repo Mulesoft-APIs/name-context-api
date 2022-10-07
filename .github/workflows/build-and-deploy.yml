@@ -14,9 +14,8 @@ jobs:
     outputs:
         environment: ${{ steps.set_vars.outputs.environment }}
         appNameSuffix: ${{ steps.set_vars.outputs.appNameSuffix }}
-        testVar: ${{ steps.set_vars.outputs.testVar }}
-        secretSuffix: ${{ steps.step_vars.outputs.secretSuffix }}
-        secretName: ${{ steps.step_vars.outputs.secretName }}
+        secretSuffix: ${{ steps.set_vars.outputs.secretSuffix }}
+        secretName: ${{ steps.set_vars.outputs.secretName }}
     steps:
     - name: Extract branch name
       id: extract_branch
@@ -28,16 +27,13 @@ jobs:
     - name: Set variables
       id: set_vars
       run: |
-        echo "##[set-output name=environment;]$(echo "${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')"
+        environment=$(echo "${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')
+        echo "::set-output name=environment::$environment"
+        #echo "##[set-output name=environment;]$(echo "${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')"
         if [[ "${{ steps.extract_branch.outputs.branch }}" != "main" ]]; then
           echo "##[set-output name=appNameSuffix;]$(echo "-${{ steps.extract_branch.outputs.branch }}" | tr '[:upper:]' '[:lower:]')"
         fi
-        echo "##[set-output name=secretSuffix;]$(echo "${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')"
-        echo "##[set-output name=secretName;]$(echo "CLIENT_ID_${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')"
-        suffix=$(echo "${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')
-        echo $suffix
-        #echo "::set-output name=testVar::CLIENT_ID_$suffix"
-        echo "##[set-output name=testVar;]$(echo "CLIENT_ID_${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')"
+        echo "::set-output name=secretName::CLIENT_ID_$environment"
         
     - name: Print variables
       run: |
@@ -57,17 +53,14 @@ jobs:
     - name: Print vars
       run: |
         echo "Secret name: ${{ needs.prepare.outputs.secretName }}"
-        echo "Secret suffix: ${{ needs.prepare.outputs.secretSuffix }}"
         echo "Env: ${{ needs.prepare.outputs.environment }}"
-        echo "Suffix: ${{ needs.prepare.outputs.appNameSuffix }}"
-        echo "Test var: ${{ needs.prepare.outputs.testVar }}"
         
     - name: Print Env Secret
       id: set_vars
       env:
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
         SECRET_ID: ${{ secrets[env.SECRET_NAME] }}
-        CLIENT_ID_DEV: ${{ secrets[format('CLIENT_ID_{0}', needs.prepare.outputs.secretSuffix)] }}
+        CLIENT_ID_DEV: ${{ secrets[format('CLIENT_ID_{0}', needs.prepare.outputs.environment) }}
       run: |
         echo KEY: $CLIENT_ID
         echo ${{ secrets.CLIENT_ID }}
