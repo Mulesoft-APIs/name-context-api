@@ -6,7 +6,7 @@
 	<artifactId>name-context-api</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>mule-application</packaging>
-
+	
 	<name>name-context-api</name>
 
 	<properties>
