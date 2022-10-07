@@ -60,7 +60,7 @@ jobs:
       env:
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
         SECRET_ID: ${{ secrets[env.SECRET_NAME] }}
-        CLIENT_ID_DEV: ${{ secrets[format('CLIENT_ID_{0}', needs.prepare.outputs.environment) }}
+        CLIENT_ID_DEV: ${{ secrets[format('CLIENT_ID_{0}', needs.prepare.outputs.environment )] }}
       run: |
         echo KEY: $CLIENT_ID
         echo ${{ secrets.CLIENT_ID }}
