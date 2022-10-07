@@ -48,19 +48,24 @@ jobs:
         name: ${{ needs.prepare.outputs.environment }}
     outputs: 
       client_id: ${{ steps.set_vars.outputs.client_id }}
+    env:
+      SECRET_NAME: ${{ needs.prepare.outputs.secretName }}
     steps:
     - name: Print Env Secret
       id: set_vars
       env:
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
-        SECRET_NAME: ${{ needs.prepare.outputs.secretName }}
+        SECRET_ID: ${{ secrets[env.SECRET_NAME] }}
         CLIENT_ID_DEV: ${{ secrets[format('CLIENT_ID_{0}', needs.prepare.outputs.secretSuffix)] }}
       run: |
         echo KEY: $CLIENT_ID
         echo ${{ secrets.CLIENT_ID }}
-        echo ${{ secrets[env.SECRET_NAME] }}
-        echo $CLIENT_ID_DEV
-        echo "::set-output name=client_id::${{ secrets.CLIENT_ID }}"
+        echo SECRET_ID - ${{ secrets[env.SECRET_NAME] }}
+        echo CLIENT_ID_DEV: $CLIENT_ID_DEV
+        echo SECRET_NAME: $SECRET_NAME
+        echo SECRET_ID: $SECRET_ID
+        printenv | grep CLIENT_ID_
+        printenv | grep SECRET_
         
   deploy:
     needs: [prepare, build]
