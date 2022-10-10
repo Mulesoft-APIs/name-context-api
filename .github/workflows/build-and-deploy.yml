@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
         environment: ${{ steps.set_vars.outputs.environment }}
+        environmentName: ${{ steps.set_vars.outputs.environmentName }}
         appNameSuffix: ${{ steps.set_vars.outputs.appNameSuffix }}
         clientIdSecretName: ${{ steps.set_vars.outputs.clientIdSecretName }}
         clientSecretName: ${{ steps.set_vars.outputs.clientSecretName }}
@@ -28,13 +29,15 @@ jobs:
     - name: Set variables
       id: set_vars
       run: |
-        environment=$(echo "${{ steps.extract_branch.outputs.branch }}" | tr '[:lower:]' '[:upper:]')
+        environment=${{ steps.extract_branch.outputs.branch }}
+        environmentName=$(if [[ $environment == "main" ]]; then echo 'prd'; else echo $environment; fi | tr '[:lower:]' '[:upper:]')
+        echo "::set-output name=environmentName::$environmentName"
         echo "::set-output name=environment::$environment"
-        if [[ "${{ steps.extract_branch.outputs.branch }}" != "main" ]]; then
+        if [[ $environment != "main" ]]; then
           echo "##[set-output name=appNameSuffix;]$(echo "-${{ steps.extract_branch.outputs.branch }}" | tr '[:upper:]' '[:lower:]')"
         fi
-        echo "::set-output name=clientIdSecretName::CONN_ENV_${environment}_CLIENT_ID"
-        echo "::set-output name=clientSecretName::CONN_ENV_${environment}_CLIENT_SECRET"
+        echo "::set-output name=clientIdSecretName::CONN_ENV_${environmentName}_CLIENT_ID"
+        echo "::set-output name=clientSecretName::CONN_ENV_${environmentName}_CLIENT_SECRET"
         
     - name: Print variables
       run: |
