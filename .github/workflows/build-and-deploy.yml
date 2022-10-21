@@ -26,13 +26,6 @@ jobs:
     - name: Print branch name
       run: echo "Branch ${{ steps.extract_branch.outputs.branch }}"
     
-    - name: Set up JDK 8
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'zulu'
-        java-version: '8'
-        cache: maven
-        
     - name: Set variables
       id: set_vars
       run: |
@@ -64,13 +57,36 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
+    
+    - name: Set up JDK 8
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '8'
+        cache: maven
         
     - name: maven-settings-xml-action
       uses: whelk-io/maven-settings-xml-action@v20
       with:
-        repositories: '[{ "id": "my-organization-exchange-repository", "url": "https://maven.anypoint.mulesoft.com/api/v3/organizations/${{ env.ORG_ID }}/maven" }]'
-        servers: '[{ "id": "my-organization-exchange-repository", "username": "~~~Client~~~", "password": "${{ secrets.CONN_APP_CLIENT_ID }}~?~${{ secrets.CONN_APP_CLIENT_SECRET }}" }]'
-        
+        repositories: |
+          [{ 
+            "id": "my-organization-exchange-repository", 
+            "url": "https://maven.anypoint.mulesoft.com/api/v3/organizations/${{ env.ORG_ID }}/maven"
+          },{
+            "id": "releases-ee", 
+            "url": "https://repository.mulesoft.org/nexus/content/repositories/releases-ee/"
+          }]
+        servers: |
+          [{ 
+            "id": "my-organization-exchange-repository", 
+            "username": "~~~Client~~~", 
+            "password": "${{ secrets.CONN_APP_CLIENT_ID }}~?~${{ secrets.CONN_APP_CLIENT_SECRET }}" 
+          },{
+            "id": "releases-ee", 
+            "username": "qwqweqwe", 
+            "password": "wqeeqeqe" 
+          }] 
+      
     - name: Print setup
       run: |
         echo "Java\n"
