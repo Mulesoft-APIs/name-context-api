@@ -76,4 +76,24 @@ jobs:
         java -version
         echo "Maven\n"
         mvn -v
+        cat ~/.m2/settings.xml
+        
+  setup-2:
+    runs-on: ubuntu-latest 
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    
+    - name: Print setup
+      run: |
+        echo "Java\n"
+        java -version
+        echo "Maven\n"
+        mvn -v
         cat ~/.m2/settings.xml  
