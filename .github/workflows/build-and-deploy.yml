@@ -72,6 +72,8 @@ jobs:
         servers: '[{ "id": "my-organization-exchange-repository", "username": "~~~Client~~~", "password": "${{ secrets.CONN_APP_CLIENT_ID }}~?~${{ secrets.CONN_APP_CLIENT_SECRET }}" }]'
     - name: Print setup
       run: |
+        echo "Java\n"
         java -version
+        echo "Maven\n"
         mvn -v
-        cat .m2/settings.xml  
+        cat ~/.m2/settings.xml  
