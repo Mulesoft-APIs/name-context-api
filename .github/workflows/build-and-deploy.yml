@@ -79,6 +79,7 @@ jobs:
         cat ~/.m2/settings.xml
         
   setup-2:
+    needs: setup
     runs-on: ubuntu-latest 
     steps:
     - uses: actions/checkout@v3
