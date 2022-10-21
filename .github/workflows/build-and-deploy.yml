@@ -45,40 +45,33 @@ jobs:
         echo "Suffix ${{ steps.set_vars.outputs.appNameSuffix }}"
         echo "Cient ID Name ${{ steps.set_vars.outputs.clientIdSecretName }}"
         echo "Cient Secret Name ${{ steps.set_vars.outputs.clientSecretName }}"
-      
-  build:
-    runs-on: ubuntu-latest
-    needs: prepare
-    environment:
-        name: ${{ needs.prepare.outputs.environment }}
-    env:
-      CLIENT_ID_NAME: ${{ needs.prepare.outputs.clientIdSecretName }}
-      CLIENT_SECRET_NAME: ${{ needs.prepare.outputs.clientSecretName }}
-      
+        
+  setup:
+    runs-on: ubuntu-latest 
     steps:
-    - name: Print vars
-      run: |
-        echo "Secret name: ${{ needs.prepare.outputs.clientIdSecretName }}"
-        echo "Secret name: ${{ needs.prepare.outputs.clientSecretName }}"
-        echo "Env: ${{ needs.prepare.outputs.environment }}"
+    - uses: actions/checkout@v3
 
-    - name: Print Env Secret
-      id: set_vars
-      env:
-        CLIENT_ID: ${{ secrets[env.CLIENT_ID_NAME] }}
-        CLIENT_SECRET: ${{ secrets[env.CLIENT_ID_SECRET] }}
+    - uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    
+    - name: Set up JDK 8
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '8'
+        cache: maven
+        
+    - name: maven-settings-xml-action
+      uses: whelk-io/maven-settings-xml-action@v20
+      with:
+        repositories: '[{ "id": "my-organization-exchange-repository", "url": "https://maven.anypoint.mulesoft.com/api/v3/organizations/${{ env.ORG_ID }}/maven" }]'
+        servers: '[{ "id": "my-organization-exchange-repository", "username": "~~~Client~~~", "password": "${{ secrets.CONN_APP_CLIENT_ID }}~?~${{ secrets.CONN_APP_CLIENT_SECRET }}" }]'
+    - name: Print setup
       run: |
-        echo SECRET_CLIENT_ID: $CLIENT_ID
-        echo SECRET_CLIENT_SECRET: $CLIENT_SECRET
-
-  deploy:
-    needs: [prepare, build]
-    runs-on: ubuntu-latest
-    environment:
-        name: ${{ needs.prepare.outputs.environment }}
-    steps: 
-    - name: Print vars
-      run: |
-        echo ${{ secrets.CLIENT_ID }}
-        echo ${{ needs.build.outputs.client_id }}
-  
+        java -version
+        mvn -v
+        cat .m2/settings.xml  
