@@ -93,7 +93,7 @@ jobs:
         java -version
         echo "Maven\n"
         mvn -v
-        cat .m2/settings.xml
+        cat ~/.m2/settings.xml
         
   setup-2:
     needs: setup
