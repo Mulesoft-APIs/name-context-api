@@ -26,6 +26,13 @@ jobs:
     - name: Print branch name
       run: echo "Branch ${{ steps.extract_branch.outputs.branch }}"
     
+    - name: Set up JDK 8
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '8'
+        cache: maven
+        
     - name: Set variables
       id: set_vars
       run: |
@@ -38,7 +45,7 @@ jobs:
         fi
         echo "::set-output name=clientIdSecretName::CONN_ENV_${environmentName}_CLIENT_ID"
         echo "::set-output name=clientSecretName::CONN_ENV_${environmentName}_CLIENT_SECRET"
-        
+    
     - name: Print variables
       run: |
         echo "Environment ${{ steps.set_vars.outputs.environment }}"
@@ -57,20 +64,13 @@ jobs:
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
           ${{ runner.os }}-maven-
-    
-    - name: Set up JDK 8
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'zulu'
-        java-version: '8'
-        cache: maven
         
     - name: maven-settings-xml-action
       uses: whelk-io/maven-settings-xml-action@v20
       with:
         repositories: '[{ "id": "my-organization-exchange-repository", "url": "https://maven.anypoint.mulesoft.com/api/v3/organizations/${{ env.ORG_ID }}/maven" }]'
         servers: '[{ "id": "my-organization-exchange-repository", "username": "~~~Client~~~", "password": "${{ secrets.CONN_APP_CLIENT_ID }}~?~${{ secrets.CONN_APP_CLIENT_SECRET }}" }]'
-        output_file: .m2/settings.xml
+        
     - name: Print setup
       run: |
         echo "Java\n"
