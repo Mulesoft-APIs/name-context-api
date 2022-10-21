@@ -70,13 +70,14 @@ jobs:
       with:
         repositories: '[{ "id": "my-organization-exchange-repository", "url": "https://maven.anypoint.mulesoft.com/api/v3/organizations/${{ env.ORG_ID }}/maven" }]'
         servers: '[{ "id": "my-organization-exchange-repository", "username": "~~~Client~~~", "password": "${{ secrets.CONN_APP_CLIENT_ID }}~?~${{ secrets.CONN_APP_CLIENT_SECRET }}" }]'
+        output_file: .m2/settings.xml
     - name: Print setup
       run: |
         echo "Java\n"
         java -version
         echo "Maven\n"
         mvn -v
-        cat ~/.m2/settings.xml
+        cat .m2/settings.xml
         
   setup-2:
     needs: setup
@@ -97,4 +98,4 @@ jobs:
         java -version
         echo "Maven\n"
         mvn -v
-        cat ~/.m2/settings.xml  
+        cat .m2/settings.xml  
